@@ -2,7 +2,7 @@
 """
 Created on Mon 09 Nov 2020 | 5:25 PM
 
-@author: Ahmed Majuid
+@author: Joao cotta and Ahmed Majuid
 
 Usage: 
 Define the network architecture and training hyperparameters

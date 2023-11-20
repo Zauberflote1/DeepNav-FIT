@@ -3,7 +3,7 @@
 """
 Created on Tue Jul 7 15:48:47 2020
 
-@author: Ahmed Majuid
+@author: Joao cotta and Ahmed Majuid
 """
 
 import os

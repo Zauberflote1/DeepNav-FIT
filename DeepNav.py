@@ -25,12 +25,25 @@ create_new_dataset = True
 
 # Network Architecture
 model_architecture = [
-    tf.keras.layers.LSTM(20, return_sequences=True), #200
-    # tf.keras.layers.LSTM(200, return_sequences=True),
-    # tf.keras.layers.LSTM(200, return_sequences=True),
-    tf.keras.layers.LSTM(20, return_sequences=False), #200S
-    tf.keras.layers.Dense(6)
-    ]
+    tf.keras.layers.LSTM(50, return_sequences=True, input_shape=(None, input_features)),  # First LSTM layer
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dropout(0.2),
+
+    tf.keras.layers.LSTM(100, return_sequences=True),  # Second LSTM layer
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dropout(0.2),
+
+    tf.keras.layers.LSTM(50, return_sequences=True),  # Third LSTM layer
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dropout(0.2),
+
+    tf.keras.layers.LSTM(50, return_sequences=False),  
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dropout(0.2),
+
+    tf.keras.layers.Dense(50, activation='relu'),  # Dense layer
+    tf.keras.layers.Dense(6)  # Output layer
+]
 
 # looping on parameters
 varying_hyperparam = None
@@ -42,11 +55,10 @@ session_data = {"trial_number" : 1,
                 "session_mode" : session_mode[mode_id],
                 "gpu_name" : gpu_name[gpu_id],
 
-                "batch_size" : int(1 * 1024),
+                "batch_size" : int(1 * 4096),
                 "learning_rate" : 0.001,
-                "window_size" : 10, # 200
-                "dropout" : 0.0,
-                "epochs" : 3,  # 100
+                "window_size" : 200, # 200
+                "epochs" : 100,  # 100
                 "initial_epoch" : 0
                 }
 

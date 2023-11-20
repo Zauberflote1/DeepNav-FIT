@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 12 21:48:47 2020
 
-@author: Ahmed Majuid
-"""
 import os, csv, json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -93,6 +89,7 @@ def evaluate_all_flights(model, train_flights_dict, val_flights_dict, trial_fold
         # sort flights by name (shorter flight first)
         flights_list = sorted(flights_dict.items())
         total_flights = len(flights_list) - 1
+        flight_counter = 1
 
         # dictionary of (flight_name : max_pos_error) pairs, used to extract the best & worst flights
         flights_errors = {}
@@ -102,15 +99,18 @@ def evaluate_all_flights(model, train_flights_dict, val_flights_dict, trial_fold
 
         for flight_number, one_flight_data in enumerate(flights_list):
             
-            ##to speedup experimenting
-            # if flight_number > 5:
-            #     break
+            #to speedup experimenting
+            if flight_number > 5:
+                break
 
             flight_name = one_flight_data[0]
             print("flight " + str(flight_number) + "/" + str(total_flights) + " : " + flight_name)
             
             features = one_flight_data[1][0]
             ground_truth_diff = one_flight_data[1][1]
+            if features.size == 0:
+              print(f"Skipping flight {flight_name} as it has no feature data.")
+              continue  # Skip this flight
             predictions_diff = model.predict(features)
 
             # Reconstruct the original signals from differenced signals
@@ -152,7 +152,8 @@ def evaluate_all_flights(model, train_flights_dict, val_flights_dict, trial_fold
             flights_errors[pdf_name] = max_position_error
 
             flight_duration = ground_truth_reconstructed.shape[0] * 0.2 / 60
-            set_summary.append([int(flight_name[0:4]), flight_duration, max_position_error, max_velocity_error])
+            set_summary.append([flight_counter, flight_duration, max_position_error, max_velocity_error])
+            flight_counter += 1
         
         flights_summary[set_name] = set_summary
         
@@ -166,15 +167,21 @@ def evaluate_all_flights(model, train_flights_dict, val_flights_dict, trial_fold
 
         for i in range(n_extreme_flights):
             pdf_name = sorted_flights[i][0]
-            old_name = os.path.join(old_name_base, pdf_name)
+            old_name = os.path.join(old_name_base, pdf_name)  # This now points directly to "reconstructed" directory
             new_name = os.path.join(best_name_base, pdf_name)
-            os.rename(old_name, new_name)
-        
+            if os.path.exists(old_name):  # Check if the file actually exists before renaming
+                os.rename(old_name, new_name)
+            else:
+                print(f"File not found: {old_name}")
+
         for i in range(-n_extreme_flights, 0):
             pdf_name = sorted_flights[i][0]
-            old_name = os.path.join(old_name_base, pdf_name)
+            old_name = os.path.join(old_name_base, pdf_name)  # This now points directly to "reconstructed" directory
             new_name = os.path.join(worst_name_base, pdf_name)
-            os.rename(old_name, new_name)
+            if os.path.exists(old_name):  # Check if the file actually exists before renaming
+                os.rename(old_name, new_name)
+            else:
+                print(f"File not found: {old_name}")
     
     return flights_summary
 

@@ -25,7 +25,7 @@ create_new_dataset = True
 
 # Network Architecture
 model_architecture = [
-    tf.keras.layers.LSTM(200, return_sequences=True, input_shape=(None, input_features)),  # First LSTM layer
+    tf.keras.layers.LSTM(200, return_sequences=True),  # First LSTM layer
     tf.keras.layers.BatchNormalization(),
     tf.keras.layers.Dropout(0.2),
 

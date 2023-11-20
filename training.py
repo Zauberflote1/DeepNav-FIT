@@ -2,7 +2,7 @@
 """
 Created on Fri Jun 12 21:48:47 2020
 
-@author: Ahmed Majuid
+@author: Joao cotta and Ahmed Majuid
 
 This script is the training backend, called by training_options.py
 """
